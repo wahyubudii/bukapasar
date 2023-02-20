@@ -2,7 +2,9 @@ import User from "../models/User";
 import expressAsyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import { generateToken } from "../config/jwtToken";
+import { generateRefreshToken } from "../config/refreshToken";
 import { validateMongodbId } from "../utils/validateMongodbId";
+import jwt from "jsonwebtoken";
 
 export const signUp = expressAsyncHandler(async (req, res, next) => {
   const { firstname, lastname, email, mobile, password } = req.body;
@@ -57,6 +59,19 @@ export const signIn = expressAsyncHandler(async (req, res, next) => {
     throw new Error("Incorrect Password");
   }
 
+  const refreshToken = await generateRefreshToken(existingUser?._id);
+  const updateUser = await User.findByIdAndUpdate(
+    existingUser?.id,
+    {
+      refreshToken,
+    },
+    { new: true }
+  );
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    maxAge: 72 * 60 * 60 * 1000,
+  });
   const data = {
     _id: existingUser?._id,
     firstname: existingUser?.firstname,
@@ -67,6 +82,47 @@ export const signIn = expressAsyncHandler(async (req, res, next) => {
   };
 
   return res.status(200).json({ message: "Login Successfully", data });
+});
+
+export const handleRefreshToken = expressAsyncHandler(
+  async (req, res, next) => {
+    const cookie = req.cookies;
+    if (!cookie?.refreshToken)
+      throw new Error("Refresh token not found in cookies");
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({ refreshToken });
+    if (!user) throw new Error("No refresh token matched");
+    jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
+      if (err || user.id !== decoded.id) {
+        throw new Error("There is something error with refresh token");
+      }
+      const accessToken = generateToken(user?._id);
+      res.json({ accessToken });
+    });
+  }
+);
+
+export const logout = expressAsyncHandler(async (req, res, next) => {
+  const cookie = req.cookies;
+  if (!cookie?.refreshToken)
+    throw new Error("Refresh token not found in cookies");
+  const refreshToken = cookie.refreshToken;
+  const user = await User.findOne({ refreshToken });
+  if (!user) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+    });
+    return res.sendStatus(204); // forbidden
+  }
+  await User.findOneAndUpdate(refreshToken, {
+    refreshToken: "",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+  });
+  res.sendStatus(204); // forbidden
 });
 
 export const getAllUser = expressAsyncHandler(async (req, res, next) => {

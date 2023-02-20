@@ -5,6 +5,7 @@ import authRouter from "./routes/userRoute";
 import bodyParser from "body-parser";
 import { notFound, errorHandler } from "./middlewares/errorHandling";
 import { dbConnect } from "./config/dbConnect";
+import cookieParser from "cookie-parser";
 
 // port
 const port = process.env.PORT || 4000;
@@ -15,7 +16,10 @@ const app = express();
 // middlewares
 app.use(bodyParser.json());
 
-// database servic
+// memory
+app.use(cookieParser());
+
+// database service
 dbConnect();
 
 // routes
