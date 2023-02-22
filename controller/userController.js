@@ -19,10 +19,6 @@ export const signUp = expressAsyncHandler(async (req, res, next) => {
     throw new Error("User already exists, login instead");
   }
 
-  if (!this.isModified("password")) {
-    next();
-  }
-
   const salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(password, salt);
 
