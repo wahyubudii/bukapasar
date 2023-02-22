@@ -19,6 +19,10 @@ export const signUp = expressAsyncHandler(async (req, res, next) => {
     throw new Error("User already exists, login instead");
   }
 
+  if (!this.isModified("password")) {
+    next();
+  }
+
   const salt = bcrypt.genSaltSync(10);
   const hashedPassword = bcrypt.hashSync(password, salt);
 
@@ -131,7 +135,7 @@ export const getAllUser = expressAsyncHandler(async (req, res, next) => {
   try {
     users = await User.find();
   } catch (err) {
-    throw new Error("User not found");
+    throw new Error(err);
   }
 
   return res.status(200).json({ users });
@@ -161,9 +165,8 @@ export const deleteUser = expressAsyncHandler(async (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-  validateMongodbId(id);
 
-  // if (!user) throw new Error("User not found");
+  validateMongodbId(id);
 
   res.status(200).json({ message: "Delete successfully" });
 });
