@@ -5,6 +5,8 @@ import { generateToken } from "../config/jwtToken";
 import { generateRefreshToken } from "../config/refreshToken";
 import { validateMongodbId } from "../utils/validateMongodbId";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { sendEmail } from "./emailController";
 
 export const signUp = expressAsyncHandler(async (req, res, next) => {
   const { firstname, lastname, email, mobile, password } = req.body;
@@ -234,4 +236,67 @@ export const unblockUser = expressAsyncHandler(async (req, res, next) => {
   res.status(200).json({
     message: "User Unblocked",
   });
+});
+
+export const updatePassword = expressAsyncHandler(async (req, res, next) => {
+  const { _id } = req.user;
+  const { password } = req.body;
+  validateMongodbId(_id);
+
+  const user = await User.findById(_id);
+  if (password) {
+    user.password = password;
+    const updatePassword = await user.save();
+    res.json({ message: "Successfully update password", updatePassword });
+  } else {
+    res.json(user);
+  }
+});
+
+export const forgotPasswordToken = expressAsyncHandler(
+  async (req, res, next) => {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("User not found with this email!");
+
+    try {
+      const resetToken = crypto.randomBytes(32).toString("hex");
+      user.passwordResetToken = crypto
+        .createHash("sha256")
+        .update(resetToken)
+        .digest("hex");
+      user.passwordResetExpires = Date.now() + 30 * 60 * 1000;
+      await user.save();
+      const resetURL = `Hi, Please follow this link to reset Your Password. This link is valid till 10 minutes from now. <a href='http://localhost:5000/api/user/reset-password/${resetToken}'>Click Here</>`;
+      const data = {
+        to: email,
+        subject: "Forgot Password Link",
+        text: "Hey User!",
+        htm: resetURL,
+      };
+      sendEmail(data);
+      res.json(resetToken);
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+);
+
+export const resetPassword = expressAsyncHandler(async (req, res, next) => {
+  const { password } = req.body;
+  const { token } = req.params;
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  console.log(hashedToken);
+  console.log(user);
+
+  if (!user) throw new Error("Token expired, please try again later!");
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+  res.json({ message: "Successfully reset password", user });
 });

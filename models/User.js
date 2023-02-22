@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
   {
@@ -41,10 +42,22 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  const salt = await bcrypt.genSaltSync(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
 export default mongoose.model("User", userSchema);
