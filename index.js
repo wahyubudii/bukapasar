@@ -1,16 +1,16 @@
 import express from "express";
 import * as dotenv from "dotenv";
 dotenv.config();
-import authRouter from "./routes/userRoute";
-import productRouter from "./routes/productRoute";
 import bodyParser from "body-parser";
 import { notFound, errorHandler } from "./middlewares/errorHandling";
 import { dbConnect } from "./config/dbConnect";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import blogRouter from "./routes/blogRouter";
-import prodCategoryRoute from "./routes/productCatRoute";
-
+import authRouter from "./routes/userRoute";
+import productRouter from "./routes/productRoute";
+import blogRouter from "./routes/blogRoute";
+import productCatRouter from "./routes/productCatRoute";
+import blogCatRouter from "./routes/blogCatRoute";
 // port
 const port = process.env.PORT || 4000;
 
@@ -30,6 +30,8 @@ app.use("/api/user", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/category", prodCategoryRoute);
+app.use("/api/category", productCatRouter);
+app.use("/api/blogcategory", blogCatRouter);
 
 // server
 app.use(notFound);

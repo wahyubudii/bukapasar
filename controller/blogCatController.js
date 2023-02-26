@@ -1,0 +1,71 @@
+import expressAsyncHandler from "express-async-handler";
+import BlogCategory from "../models/BlogCat";
+import { validateMongodbId } from "../utils/validateMongodbId";
+
+export const getAllCategory = expressAsyncHandler(async (req, res, next) => {
+  let category;
+
+  try {
+    category = await BlogCategory.find();
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  res.json(category);
+});
+
+export const getCategoryById = expressAsyncHandler(async (req, res, next) => {
+  let category;
+  const { id } = req.params;
+  validateMongodbId(id);
+
+  try {
+    category = await BlogCategory.findById(id);
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  res.json(category);
+});
+
+export const addCategory = expressAsyncHandler(async (req, res, next) => {
+  let newCategory;
+
+  try {
+    newCategory = await BlogCategory.create(req.body);
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  res.json({ message: "Successfully added category", newCategory });
+});
+
+export const updateCategory = expressAsyncHandler(async (req, res, next) => {
+  let category;
+  const { id } = req.params;
+  validateMongodbId(id);
+
+  try {
+    category = await BlogCategory.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  res.json({ message: "Successfully update category", category });
+});
+
+export const deleteCategory = expressAsyncHandler(async (req, res, next) => {
+  let category;
+  const { id } = req.params;
+  validateMongodbId(id);
+
+  try {
+    category = await BlogCategory.findByIdAndDelete(id);
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  res.json({ message: "Successfully delete category" });
+});
