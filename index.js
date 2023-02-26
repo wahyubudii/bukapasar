@@ -11,6 +11,7 @@ import productRouter from "./routes/productRoute";
 import blogRouter from "./routes/blogRoute";
 import productCatRouter from "./routes/productCatRoute";
 import blogCatRouter from "./routes/blogCatRoute";
+import brandRouter from "./routes/brandRoute";
 // port
 const port = process.env.PORT || 4000;
 
@@ -29,9 +30,9 @@ dbConnect();
 app.use("/api/user", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/blog", blogRouter);
-app.use("/api/category", prodCategoryRoute);
 app.use("/api/category", productCatRouter);
 app.use("/api/blogcategory", blogCatRouter);
+app.use("/api/brand", brandRouter);
 
 // server
 app.use(notFound);
