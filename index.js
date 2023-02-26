@@ -27,6 +27,7 @@ dbConnect();
 // routes
 app.use("/api/user", authRouter);
 app.use("/api/product", productRouter);
+app.use("/api/blog", blogRouter);
 
 // server
 app.use(notFound);
