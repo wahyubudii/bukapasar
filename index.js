@@ -9,6 +9,7 @@ import { dbConnect } from "./config/dbConnect";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import blogRouter from "./routes/blogRouter";
+import prodCategoryRoute from "./routes/productCatRoute";
 
 // port
 const port = process.env.PORT || 4000;
@@ -28,6 +29,7 @@ dbConnect();
 app.use("/api/user", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/category", prodCategoryRoute);
 
 // server
 app.use(notFound);
