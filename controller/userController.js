@@ -141,6 +141,8 @@ export const getAllUser = expressAsyncHandler(async (req, res, next) => {
 
 export const getUserById = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
+  validateMongodbId(id);
+
   let user;
 
   try {
@@ -149,9 +151,7 @@ export const getUserById = expressAsyncHandler(async (req, res, next) => {
     console.log(err);
   }
 
-  validateMongodbId(id);
-
-  res.status(200).json({ data: user });
+  res.status(200).json(user);
 });
 
 export const deleteUser = expressAsyncHandler(async (req, res, next) => {
@@ -290,8 +290,6 @@ export const resetPassword = expressAsyncHandler(async (req, res, next) => {
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  console.log(hashedToken);
-  console.log(user);
 
   if (!user) throw new Error("Token expired, please try again later!");
   user.password = password;

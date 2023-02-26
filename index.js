@@ -8,6 +8,7 @@ import { notFound, errorHandler } from "./middlewares/errorHandling";
 import { dbConnect } from "./config/dbConnect";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import blogRouter from "./routes/blogRouter";
 
 // port
 const port = process.env.PORT || 4000;

@@ -63,7 +63,7 @@ export const getProductById = expressAsyncHandler(async (req, res, next) => {
 
   validateMongodbId(id);
 
-  res.status(200).json({ product });
+  res.status(200).json(product);
 });
 
 export const addProduct = expressAsyncHandler(async (req, res, next) => {
@@ -96,6 +96,8 @@ export const updateProduct = expressAsyncHandler(async (req, res, next) => {
   } catch (err) {
     throw new Error(err);
   }
+
+  validateMongodbId(id);
 
   res
     .status(200)

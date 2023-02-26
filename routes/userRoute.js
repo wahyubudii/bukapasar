@@ -20,9 +20,9 @@ const authRouter = express.Router();
 
 // GET
 authRouter.get("/", getAllUser);
+authRouter.get("/:id", authMiddleware, isAdmin, getUserById);
 authRouter.get("/refresh", handleRefreshToken);
 authRouter.get("/logout", logout);
-authRouter.get("/:id", authMiddleware, isAdmin, getUserById);
 
 // POST
 authRouter.post("/register", signUp);
