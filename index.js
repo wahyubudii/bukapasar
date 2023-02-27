@@ -12,6 +12,7 @@ import { blogRouter } from "./routes/blogRoute";
 import { productCatRouter } from "./routes/productCatRoute";
 import { blogCatRouter } from "./routes/blogCatRoute";
 import { brandRouter } from "./routes/brandRoute";
+import { couponRouter } from "./routes/couponRoute";
 
 // port
 const port = process.env.PORT || 4000;
@@ -34,6 +35,7 @@ app.use("/api/blog", blogRouter);
 app.use("/api/category", productCatRouter);
 app.use("/api/blogcategory", blogCatRouter);
 app.use("/api/brand", brandRouter);
+app.use("/api/coupon", couponRouter);
 
 // server
 app.use(notFound);
