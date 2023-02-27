@@ -2,16 +2,17 @@ import express from "express";
 import * as dotenv from "dotenv";
 dotenv.config();
 import bodyParser from "body-parser";
-import { notFound, errorHandler } from "./middlewares/errorHandling";
-import { dbConnect } from "./config/dbConnect";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import authRouter from "./routes/userRoute";
-import productRouter from "./routes/productRoute";
-import blogRouter from "./routes/blogRoute";
-import productCatRouter from "./routes/productCatRoute";
-import blogCatRouter from "./routes/blogCatRoute";
-import brandRouter from "./routes/brandRoute";
+import { notFound, errorHandler } from "./middlewares/errorHandling";
+import { dbConnect } from "./config/dbConnect";
+import { authRouter } from "./routes/userRoute";
+import { productRouter } from "./routes/productRoute";
+import { blogRouter } from "./routes/blogRoute";
+import { productCatRouter } from "./routes/productCatRoute";
+import { blogCatRouter } from "./routes/blogCatRoute";
+import { brandRouter } from "./routes/brandRoute";
+
 // port
 const port = process.env.PORT || 4000;
 

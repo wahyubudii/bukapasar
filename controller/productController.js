@@ -2,6 +2,7 @@ import Product from "../models/Product";
 import expressAsyncHandler from "express-async-handler";
 import { validateMongodbId } from "../utils/validateMongodbId";
 import slugify from "slugify";
+import User from "../models/User";
 
 export const getAllProduct = expressAsyncHandler(async (req, res, next) => {
   let product;
@@ -52,16 +53,15 @@ export const getAllProduct = expressAsyncHandler(async (req, res, next) => {
 });
 
 export const getProductById = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
   let product;
+  const { id } = req.params;
+  validateMongodbId(id);
 
   try {
     product = await Product.findById(id);
   } catch (err) {
     console.log(err);
   }
-
-  validateMongodbId(id);
 
   res.status(200).json(product);
 });
@@ -84,9 +84,12 @@ export const addProduct = expressAsyncHandler(async (req, res, next) => {
 });
 
 export const updateProduct = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const { title } = req.body;
   let updateProduct;
+
+  const { id } = req.params;
+  validateMongodbId(id);
+
+  const { title } = req.body;
 
   try {
     if (title) {
@@ -97,21 +100,109 @@ export const updateProduct = expressAsyncHandler(async (req, res, next) => {
     throw new Error(err);
   }
 
-  validateMongodbId(id);
-
   res
     .status(200)
     .json({ message: "successfully update product", updateProduct });
 });
 
 export const deleteProduct = expressAsyncHandler(async (req, res, next) => {
+  let product;
   const { id } = req.params;
-  let existingProduct;
+  validateMongodbId(id);
+
   try {
-    existingProduct = await Product.findByIdAndDelete(id);
+    product = await Product.findByIdAndDelete(id);
   } catch (err) {
     throw new Error("Product not found");
   }
 
   res.status(200).json({ message: "Successfully delete product" });
+});
+
+export const addToWishlist = expressAsyncHandler(async (req, res, next) => {
+  const { _id } = req.user;
+  const { prodId } = req.body;
+
+  try {
+    const user = await User.findById(_id);
+    const alreadyAdded = user.wishlist.find((id) => id.toString() === prodId);
+    if (alreadyAdded) {
+      let user = await User.findByIdAndUpdate(
+        _id,
+        {
+          $pull: { wishlist: prodId },
+        },
+        {
+          new: true,
+        }
+      );
+      res.json(user);
+    } else {
+      let user = await User.findByIdAndUpdate(
+        _id,
+        {
+          $push: { wishlist: prodId },
+        },
+        {
+          new: true,
+        }
+      );
+      res.json(user);
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+export const rating = expressAsyncHandler(async (req, res, next) => {
+  const { _id } = req.user;
+  const { star, prodId, comment } = req.body;
+
+  try {
+    const product = await Product.findById(prodId);
+    let alreadyRated = product.ratings.find(
+      (userId) => userId.postedby.toString() === _id.toString()
+    );
+    if (alreadyRated) {
+      const updateRating = await Product.updateOne(
+        {
+          ratings: { $elemMatch: alreadyRated },
+        },
+        {
+          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
+        },
+        { new: true }
+      );
+    } else {
+      const rateProduct = await Product.findByIdAndUpdate(
+        prodId,
+        {
+          $push: {
+            ratings: {
+              star: star,
+              comment: comment,
+              postedby: _id,
+            },
+          },
+        },
+        { new: true }
+      );
+    }
+    const getAllRatings = await Product.findById(prodId);
+    let totalRating = getAllRatings.ratings.length;
+    let ratingsum = getAllRatings.ratings
+      .map((item) => item.star)
+      .reduce((prev, curr) => prev + curr, 0);
+    let actualRating = Math.round(ratingsum / totalRating);
+    let finalproduct = await Product.findByIdAndUpdate(
+      prodId,
+      {
+        totalRating: actualRating,
+      },
+      { new: true }
+    );
+    res.json(finalproduct);
+  } catch (err) {
+    throw new Error(err);
+  }
 });

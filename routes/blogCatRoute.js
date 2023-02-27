@@ -8,7 +8,7 @@ import {
 } from "../controller/blogCatController";
 import { authMiddleware, isAdmin } from "../middlewares/authMiddleware";
 
-const blogCatRouter = express.Router();
+export const blogCatRouter = express.Router();
 
 // GET
 blogCatRouter.get("/", getAllCategory);
@@ -22,5 +22,3 @@ blogCatRouter.put("/:id", authMiddleware, isAdmin, updateCategory);
 
 // DELETE
 blogCatRouter.delete("/:id", authMiddleware, isAdmin, deleteCategory);
-
-export default blogCatRouter;

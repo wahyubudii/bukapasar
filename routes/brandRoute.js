@@ -8,7 +8,7 @@ import {
 } from "../controller/brandController";
 import { authMiddleware, isAdmin } from "../middlewares/authMiddleware";
 
-const brandRouter = express.Router();
+export const brandRouter = express.Router();
 
 // GET
 brandRouter.get("/", getAllBrand);
@@ -22,5 +22,3 @@ brandRouter.put("/:id", authMiddleware, isAdmin, updateBrand);
 
 // DELETE
 brandRouter.delete("/:id", authMiddleware, isAdmin, deleteBrand);
-
-export default brandRouter;

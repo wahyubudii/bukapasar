@@ -8,7 +8,7 @@ import {
 } from "../controller/productCatController";
 import { isAdmin, authMiddleware } from "../middlewares/authMiddleware";
 
-const productCatRouter = express.Router();
+export const productCatRouter = express.Router();
 
 // GET
 productCatRouter.get("/", getAllCategory);
@@ -22,5 +22,3 @@ productCatRouter.put("/:id", authMiddleware, isAdmin, updateCategory);
 
 // DELETE
 productCatRouter.delete("/:id", authMiddleware, isAdmin, deleteCategory);
-
-export default productCatRouter;

@@ -16,7 +16,7 @@ import {
 } from "../controller/userController";
 import { authMiddleware, isAdmin } from "../middlewares/authMiddleware";
 
-const authRouter = express.Router();
+export const authRouter = express.Router();
 
 // GET
 authRouter.get("/", getAllUser);
@@ -38,5 +38,3 @@ authRouter.put("/reset-password/:token", resetPassword);
 
 // DELETE
 authRouter.delete("/:id", deleteUser);
-
-export default authRouter;

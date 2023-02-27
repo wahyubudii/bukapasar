@@ -11,7 +11,7 @@ import {
   uploadImage,
 } from "../controller/blogController";
 
-const blogRouter = express.Router();
+export const blogRouter = express.Router();
 
 // GET
 blogRouter.get("/", getAllBlog);
@@ -28,5 +28,3 @@ blogRouter.put("/upload/:id", authMiddleware, isAdmin, uploadImage);
 
 // DELETE
 blogRouter.delete("/:id", authMiddleware, isAdmin, deleteBlog);
-
-export default blogRouter;
