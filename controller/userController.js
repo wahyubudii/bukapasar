@@ -8,8 +8,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { sendEmail } from "./emailController";
 
-export const signUp = expressAsyncHandler(async (req, res, next) => {
-  const { firstname, lastname, email, mobile, password } = req.body;
+export const register = expressAsyncHandler(async (req, res, next) => {
+  const { email } = req.body;
   let existingUser;
   try {
     existingUser = await User.findOne({ email });
@@ -21,16 +21,7 @@ export const signUp = expressAsyncHandler(async (req, res, next) => {
     throw new Error("User already exists, login instead");
   }
 
-  const salt = bcrypt.genSaltSync(10);
-  const hashedPassword = bcrypt.hashSync(password, salt);
-
-  const newUser = new User({
-    firstname,
-    lastname,
-    email,
-    mobile,
-    password: hashedPassword,
-  });
+  const newUser = new User(req.body);
 
   try {
     await newUser.save();
@@ -40,16 +31,17 @@ export const signUp = expressAsyncHandler(async (req, res, next) => {
 
   return res
     .status(201)
-    .json({ message: "successfully create account", newUser });
+    .json({ message: "Successfully create account", newUser });
 });
 
-export const signIn = expressAsyncHandler(async (req, res, next) => {
+// Login by User
+export const userLogin = expressAsyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   let existingUser;
   try {
     existingUser = await User.findOne({ email });
   } catch (err) {
-    console.log(err);
+    throw new Error(err);
   }
 
   if (!existingUser) {
@@ -74,6 +66,7 @@ export const signIn = expressAsyncHandler(async (req, res, next) => {
     httpOnly: true,
     maxAge: 72 * 60 * 60 * 1000,
   });
+
   const data = {
     _id: existingUser?._id,
     firstname: existingUser?.firstname,
@@ -84,6 +77,53 @@ export const signIn = expressAsyncHandler(async (req, res, next) => {
   };
 
   return res.status(200).json({ message: "Login Successfully", data });
+});
+
+// Login by Admin
+export const adminLogin = expressAsyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+  let existingAdmin;
+  try {
+    existingAdmin = await User.findOne({ email });
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  if (existingAdmin.role !== "admin") throw new Error("Not Authorized");
+
+  if (!existingAdmin) throw new Error("Incorrect Email");
+
+  const isPasswordCorrect = bcrypt.compareSync(
+    password,
+    existingAdmin.password
+  );
+
+  if (!isPasswordCorrect) throw new Error("Incorrect Password");
+
+  const refreshToken = await generateRefreshToken(existingAdmin?._id);
+  const updateUser = await User.findByIdAndUpdate(
+    existingAdmin?.id,
+    {
+      refreshToken,
+    },
+    { new: true }
+  );
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    maxAge: 72 * 60 * 60 * 1000,
+  });
+
+  const data = {
+    _id: existingAdmin?._id,
+    firstname: existingAdmin?.firstname,
+    lastname: existingAdmin?.lastname,
+    email: existingAdmin?.email,
+    mobile: existingAdmin?.mobile,
+    token: generateToken(existingAdmin?._id),
+  };
+
+  return res.status(200).json({ message: "Login successfully admin", data });
 });
 
 export const handleRefreshToken = expressAsyncHandler(
@@ -297,4 +337,37 @@ export const resetPassword = expressAsyncHandler(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
   res.json({ message: "Successfully reset password", user });
+});
+
+export const getWishlist = expressAsyncHandler(async (req, res, next) => {
+  let user;
+  const { _id } = req.user;
+  validateMongodbId(_id);
+
+  try {
+    user = await User.findById(_id).populate("wishlist");
+  } catch (err) {
+    throw new Error(err);
+  }
+  res.json(user);
+});
+
+export const updateAddress = expressAsyncHandler(async (req, res, next) => {
+  let newAddress;
+  const { _id } = req.user;
+  validateMongodbId(_id);
+
+  try {
+    newAddress = await User.findByIdAndUpdate(
+      _id,
+      { address: req?.body?.address },
+      {
+        new: true,
+      }
+    );
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  res.json({ message: "Successfully update address", newAddress });
 });
