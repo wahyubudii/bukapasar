@@ -10,6 +10,7 @@ import {
   updateBlog,
   uploadImage,
 } from "../controller/blogController";
+import { blogImgResize, uploadPhoto } from "../middlewares/uploadImages";
 
 export const blogRouter = express.Router();
 
@@ -24,7 +25,14 @@ blogRouter.post("/", authMiddleware, isAdmin, addBlog);
 blogRouter.put("/likes", authMiddleware, isAdmin, likeBlog);
 blogRouter.put("/dislikes", authMiddleware, isAdmin, dislikeBlog);
 blogRouter.put("/:id", authMiddleware, isAdmin, updateBlog);
-blogRouter.put("/upload/:id", authMiddleware, isAdmin, uploadImage);
+blogRouter.put(
+  "/upload/:id",
+  authMiddleware,
+  isAdmin,
+  uploadPhoto.array("images", 2),
+  blogImgResize,
+  uploadImage
+);
 
 // DELETE
 blogRouter.delete("/:id", authMiddleware, isAdmin, deleteBlog);

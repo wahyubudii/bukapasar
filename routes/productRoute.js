@@ -7,8 +7,10 @@ import {
   getProductById,
   rating,
   updateProduct,
+  uploadImages,
 } from "../controller/productController";
 import { isAdmin, authMiddleware } from "../middlewares/authMiddleware";
+import { productImgResize, uploadPhoto } from "../middlewares/uploadImages";
 
 export const productRouter = express.Router();
 
@@ -23,6 +25,14 @@ productRouter.post("/", authMiddleware, isAdmin, addProduct);
 productRouter.put("/wishlist", authMiddleware, addToWishlist);
 productRouter.put("/rating", authMiddleware, rating);
 productRouter.put("/:id", authMiddleware, isAdmin, updateProduct);
+productRouter.put(
+  "/upload/:id",
+  authMiddleware,
+  isAdmin,
+  uploadPhoto.array("images", 10),
+  productImgResize,
+  uploadImages
+);
 
 // DELETE
 productRouter.delete("/:id", authMiddleware, isAdmin, deleteProduct);

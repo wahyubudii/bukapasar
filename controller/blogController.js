@@ -3,6 +3,8 @@ import Blog from "../models/Blog";
 import User from "../models/User";
 import Product from "../models/Product";
 import { validateMongodbId } from "../utils/validateMongodbId";
+import { cloudinaryUploadImg } from "../utils/cloudinary";
+import fs from "fs";
 
 export const getAllBlog = expressAsyncHandler(async (req, res, next) => {
   let blogs;
@@ -174,5 +176,30 @@ export const dislikeBlog = expressAsyncHandler(async (req, res) => {
 });
 
 export const uploadImage = expressAsyncHandler(async (req, res, next) => {
-  console.log("zxczxc");
+  const { id } = req.params;
+  validateMongodbId(id);
+
+  try {
+    const uploader = (path) => cloudinaryUploadImg(path, "images");
+    const urls = [];
+    const files = req.files;
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await uploader(path);
+      urls.push(newPath);
+      fs.unlinkSync(path);
+    }
+    const findBlog = await Blog.findByIdAndUpdate(
+      id,
+      {
+        images: urls.map((file) => {
+          return file;
+        }),
+      },
+      { new: true }
+    );
+    res.json(findBlog);
+  } catch (err) {
+    throw new Error(err);
+  }
 });
