@@ -1,7 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
 import Blog from "../models/Blog";
-import User from "../models/User";
-import Product from "../models/Product";
 import { validateMongodbId } from "../utils/validateMongodbId";
 import { cloudinaryUploadImg } from "../utils/cloudinary";
 import fs from "fs";
