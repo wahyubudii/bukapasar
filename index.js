@@ -15,7 +15,7 @@ import { brandRouter } from "./routes/brandRoute.js";
 import { couponRouter } from "./routes/couponRoute.js";
 
 // port
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 
 // rest object
 const app = express();
