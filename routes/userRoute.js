@@ -25,8 +25,8 @@ import {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
-} from "../controller/userController";
-import { authMiddleware, isAdmin } from "../middlewares/authMiddleware";
+} from "../controller/userController.js";
+import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 
 export const authRouter = express.Router();
 
@@ -66,4 +66,4 @@ authRouter.put(
 
 // DELETE
 authRouter.delete("/empty-cart", authMiddleware, emptyCart);
-authRouter.delete("/:id", deleteUser);
+authRouter.delete("/:id", authMiddleware, deleteUser);

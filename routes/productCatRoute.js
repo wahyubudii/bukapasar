@@ -5,8 +5,8 @@ import {
   getAllCategory,
   getCategoryById,
   updateCategory,
-} from "../controller/productCatController";
-import { isAdmin, authMiddleware } from "../middlewares/authMiddleware";
+} from "../controller/productCatController.js";
+import { isAdmin, authMiddleware } from "../middlewares/authMiddleware.js";
 
 export const productCatRouter = express.Router();
 

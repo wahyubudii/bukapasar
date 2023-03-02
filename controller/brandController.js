@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
-import Brand from "../models/Brand";
-import { validateMongodbId } from "../utils/validateMongodbId";
+import Brand from "../models/Brand.js";
+import { validateMongodbId } from "../utils/validateMongodbId.js";
 
 export const getAllBrand = expressAsyncHandler(async (req, res, next) => {
   let category;

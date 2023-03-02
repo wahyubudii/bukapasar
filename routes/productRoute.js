@@ -8,9 +8,9 @@ import {
   rating,
   updateProduct,
   uploadImages,
-} from "../controller/productController";
-import { isAdmin, authMiddleware } from "../middlewares/authMiddleware";
-import { productImgResize, uploadPhoto } from "../middlewares/uploadImages";
+} from "../controller/productController.js";
+import { isAdmin, authMiddleware } from "../middlewares/authMiddleware.js";
+import { productImgResize, uploadPhoto } from "../middlewares/uploadImages.js";
 
 export const productRouter = express.Router();
 

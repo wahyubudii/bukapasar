@@ -5,8 +5,8 @@ import {
   addCategory,
   updateCategory,
   deleteCategory,
-} from "../controller/blogCatController";
-import { authMiddleware, isAdmin } from "../middlewares/authMiddleware";
+} from "../controller/blogCatController.js";
+import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 
 export const blogCatRouter = express.Router();
 

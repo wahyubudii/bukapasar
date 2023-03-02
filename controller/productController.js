@@ -1,10 +1,10 @@
-import Product from "../models/Product";
 import expressAsyncHandler from "express-async-handler";
-import { validateMongodbId } from "../utils/validateMongodbId";
 import slugify from "slugify";
-import User from "../models/User";
-import { cloudinaryUploadImg } from "../utils/cloudinary";
 import fs from "fs";
+import Product from "../models/Product.js";
+import User from "../models/User.js";
+import { validateMongodbId } from "../utils/validateMongodbId.js";
+import { cloudinaryUploadImg } from "../utils/cloudinary.js";
 
 export const getAllProduct = expressAsyncHandler(async (req, res, next) => {
   let product;

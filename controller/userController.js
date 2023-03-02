@@ -1,17 +1,17 @@
-import User from "../models/User";
-import Cart from "../models/Cart";
-import Product from "../models/Product";
-import Coupon from "../models/Coupon";
-import Order from "../models/Order";
 import expressAsyncHandler from "express-async-handler";
-import bcrypt from "bcrypt";
-import { generateToken } from "../config/jwtToken";
-import { generateRefreshToken } from "../config/refreshToken";
-import { validateMongodbId } from "../utils/validateMongodbId";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import crypto from "crypto";
-import { sendEmail } from "./emailController";
 import uniqid from "uniqid";
+import User from "../models/User.js";
+import Cart from "../models/Cart.js";
+import Product from "../models/Product.js";
+import Coupon from "../models/Coupon.js";
+import Order from "../models/Order.js";
+import { generateToken } from "../config/jwtToken.js";
+import { generateRefreshToken } from "../config/refreshToken.js";
+import { validateMongodbId } from "../utils/validateMongodbId.js";
+import { sendEmail } from "./emailController.js";
 
 export const register = expressAsyncHandler(async (req, res, next) => {
   const { email } = req.body;

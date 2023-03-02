@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
-import Coupon from "../models/Coupon";
-import { validateMongodbId } from "../utils/validateMongodbId";
+import Coupon from "../models/Coupon.js";
+import { validateMongodbId } from "../utils/validateMongodbId.js";
 
 export const getAllCoupon = expressAsyncHandler(async (req, res, next) => {
   let coupon;

@@ -1,8 +1,8 @@
 import expressAsyncHandler from "express-async-handler";
-import Blog from "../models/Blog";
-import { validateMongodbId } from "../utils/validateMongodbId";
-import { cloudinaryUploadImg } from "../utils/cloudinary";
 import fs from "fs";
+import Blog from "../models/Blog.js";
+import { validateMongodbId } from "../utils/validateMongodbId.js";
+import { cloudinaryUploadImg } from "../utils/cloudinary.js";
 
 export const getAllBlog = expressAsyncHandler(async (req, res, next) => {
   let blogs;

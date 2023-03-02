@@ -1,5 +1,4 @@
 import express from "express";
-import { isAdmin, authMiddleware } from "../middlewares/authMiddleware";
 import {
   addBlog,
   deleteBlog,
@@ -9,8 +8,9 @@ import {
   likeBlog,
   updateBlog,
   uploadImage,
-} from "../controller/blogController";
-import { blogImgResize, uploadPhoto } from "../middlewares/uploadImages";
+} from "../controller/blogController.js";
+import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
+import { blogImgResize, uploadPhoto } from "../middlewares/uploadImages.js";
 
 export const blogRouter = express.Router();
 

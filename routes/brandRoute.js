@@ -5,8 +5,8 @@ import {
   getAllBrand,
   getBrandById,
   updateBrand,
-} from "../controller/brandController";
-import { authMiddleware, isAdmin } from "../middlewares/authMiddleware";
+} from "../controller/brandController.js";
+import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 
 export const brandRouter = express.Router();
 
