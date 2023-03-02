@@ -7,12 +7,9 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log("__filename", __filename);
-console.log("__dirname", __dirname);
-
 const multerStorage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, path.join(__dirname, "../public/images/"));
+    callback(null, path.join(process.cwd(), "/public/images/"));
   },
   filename: (req, file, callback) => {
     const uniquesuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -36,7 +33,7 @@ export const uploadPhoto = multer({
 
 export const productImgResize = async (req, res, next) => {
   if (!req.files) return next();
-  const redirectProduct = path.join(process.cwd(), "./public/images/products/");
+  const redirectProduct = path.join(process.cwd(), "/public/images/products/");
   await Promise.all(
     req.files.map(async (file) => {
       await sharp(file.path)
