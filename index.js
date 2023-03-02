@@ -4,15 +4,15 @@ dotenv.config();
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import { notFound, errorHandler } from "./middlewares/errorHandling";
-import { dbConnect } from "./config/dbConnect";
-import { authRouter } from "./routes/userRoute";
-import { productRouter } from "./routes/productRoute";
-import { blogRouter } from "./routes/blogRoute";
-import { productCatRouter } from "./routes/productCatRoute";
-import { blogCatRouter } from "./routes/blogCatRoute";
-import { brandRouter } from "./routes/brandRoute";
-import { couponRouter } from "./routes/couponRoute";
+import { notFound, errorHandler } from "./middlewares/errorHandling.js";
+import { dbConnect } from "./config/dbConnect.js";
+import { authRouter } from "./routes/userRoute.js";
+import { productRouter } from "./routes/productRoute.js";
+import { blogRouter } from "./routes/blogRoute.js";
+import { productCatRouter } from "./routes/productCatRoute.js";
+import { blogCatRouter } from "./routes/blogCatRoute.js";
+import { brandRouter } from "./routes/brandRoute.js";
+import { couponRouter } from "./routes/couponRoute.js";
 
 // port
 const port = process.env.PORT || 4000;
