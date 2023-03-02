@@ -7,6 +7,9 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+console.log("__filename", __filename);
+console.log("__dirname", __dirname);
+
 const multerStorage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, path.join(__dirname, "../public/images/"));
@@ -33,14 +36,15 @@ export const uploadPhoto = multer({
 
 export const productImgResize = async (req, res, next) => {
   if (!req.files) return next();
+  const redirectProduct = path.join(process.cwd(), "./public/images/products/");
   await Promise.all(
     req.files.map(async (file) => {
       await sharp(file.path)
         .resize(300, 300)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`public/images/products/${file.filename}`);
-      fs.unlinkSync(`public/images/products/${file.filename}`);
+        .toFile(`${redirectProduct}${file.filename}`);
+      fs.unlinkSync(`${redirectProduct}${file.filename}`);
     })
   );
   next();
@@ -48,14 +52,15 @@ export const productImgResize = async (req, res, next) => {
 
 export const blogImgResize = async (req, res, next) => {
   if (!req.files) return next();
+  const redirectBlogs = path.join(process.cwd(), "./public/images/blogs/");
   await Promise.all(
     req.files.map(async (file) => {
       await sharp(file.path)
         .resize(300, 300)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`public/images/blogs/${file.filename}`);
-      fs.unlinkSync(`public/images/blogs/${file.filename}`);
+        .toFile(`${redirectBlogs}${file.filename}`);
+      fs.unlinkSync(`${redirectBlogs}${file.filename}`);
     })
   );
   next();
