@@ -38,10 +38,6 @@ const blogSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    images: {
-      type: String,
-      default: "https://picsum.photos/200",
-    },
     author: {
       type: String,
       default: "Admin",
