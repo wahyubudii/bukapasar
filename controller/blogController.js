@@ -5,15 +5,12 @@ import { validateMongodbId } from "../utils/validateMongodbId.js";
 import { cloudinaryUploadImg } from "../utils/cloudinary.js";
 
 export const getAllBlog = expressAsyncHandler(async (req, res, next) => {
-  let blogs;
-
   try {
-    blogs = await Blog.find();
+    const blogs = await Blog.find();
+    res.json(blogs);
   } catch (err) {
     throw new Error(err);
   }
-
-  res.json({ blogs });
 });
 
 export const getBlogById = expressAsyncHandler(async (req, res, next) => {
