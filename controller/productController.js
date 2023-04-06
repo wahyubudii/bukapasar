@@ -7,8 +7,6 @@ import { validateMongodbId } from "../utils/validateMongodbId.js";
 import { cloudinaryUploadImg } from "../utils/cloudinary.js";
 
 export const getAllProduct = expressAsyncHandler(async (req, res, next) => {
-  let product;
-
   try {
     // Fitering
     const queryObj = { ...req.query };
@@ -46,12 +44,11 @@ export const getAllProduct = expressAsyncHandler(async (req, res, next) => {
       if (skip >= productCount) throw new Error("This page doesn't exists");
     }
 
-    product = await query;
+    const product = await query;
+    res.json(product);
   } catch (err) {
     throw new Error(err);
   }
-
-  res.status(200).json({ product });
 });
 
 export const getProductById = expressAsyncHandler(async (req, res, next) => {
