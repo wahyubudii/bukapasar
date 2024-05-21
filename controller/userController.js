@@ -14,10 +14,13 @@ import { validateMongodbId } from "../utils/validateMongodbId.js";
 import { sendEmail } from "./emailController.js";
 
 export const register = expressAsyncHandler(async (req, res, next) => {
-  const { email } = req.body;
+  const { email, mobile } = req.body;
   let existingUser;
   try {
-    existingUser = await User.findOne({ email });
+    existingUser = await User.findOne({
+      $or: [{ email: email }, { mobile: mobile }],
+    });
+    // existingUser = await User.findOne({ email });
   } catch (err) {
     return console.log(err);
   }
